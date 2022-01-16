@@ -3,7 +3,6 @@ from twilio.rest import Client
 
 from django.http import HttpResponse, JsonResponse
 from django.views import View
-from twilio.twiml.voice_response import VoiceResponse, Dial
 from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
 from django.views.decorators.csrf import csrf_exempt
@@ -17,33 +16,29 @@ class TestView(View):
 
 class RoomView(View):
     def get(self, request, *args, **kwargs):
-        rooms = client.conferences.stream(
-            status="in-progress"
-        )
+        rooms = client.video.rooms.list()
+
         rooms_reps = [
             {
-                "room_name": conference.friendly_name,
+                "room_name": conference.unique_name,
                 "sid": conference.sid,
-                "participants": [
-                        p.label for p in conference.participants.list()
-                    ],
+                "max_participants": conference.max_participants,
                 "status": conference.status,
             } for conference in rooms]
         return JsonResponse({"rooms": rooms_reps})
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        room_name = request.POST["roomName"]
-        participant_label = request.POST["participantLabel"]
-        response = VoiceResponse()
-        dial = Dial()
-        dial.conference(
-            name=room_name,
-            participant_label=participant_label,
-            start_conference_on_enter=True,
+        # create a new room 
+        room_name = request.POST.get("room_name")
+        max_participants = request.POST.get("max_participants")
+        room = client.video.rooms.create(
+            unique_name=room_name,
+            type="group",
+            max_participants=max_participants,
         )
-        response.append(dial)
-        return HttpResponse(response.to_xml(), content_type="text/xml")
+        
+        return JsonResponse({"room_sid": room.sid})
 
 class TokenView(View):
     def post(self, request, username, *args, **kwargs):
