@@ -33,6 +33,8 @@
             {% csrf_token %}
             <label for="username">Name: </label>
             <input type="text" name=”username” id="username">
+            <label for="username">Room SID: </label>
+            <input type="text" name=”sid” id="sid">
             <button id="join_leave">Join call</button>
         </form>
         <p id="count"></p>
@@ -48,6 +50,8 @@
             const button = document.getElementById('join_leave');
             const container = document.getElementById('container');
             const count = document.getElementById('count');
+            const roomSid = document.getElementById('sid');
+
             let room;
 
             function addLocalVideo() {
@@ -85,9 +89,9 @@
             function connect(username) {
                 let promise = new Promise((resolve, reject) => {
                     // get a token from the back end
-                    fetch('token/'+username, {
+                    fetch('token', {
                         method: 'POST',
-                        body: JSON.stringify({'username': username})
+                        body: JSON.stringify({'username': username, 'sid': roomSid.value}),
                     }).then(res => res.json()).then(data => {
                         // join video call
                         return Twilio.Video.connect(data.token);
