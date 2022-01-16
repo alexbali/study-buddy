@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import GAuth from 'vue-google-oauth2'
 
 export default {
     name: 'SignIn',
@@ -27,12 +26,17 @@ export default {
     },
     methods: {
         async authenticateWithGoogle() {
-            const gauthOption = {
-            clientId: 'CLIENT_ID.apps.googleusercontent.com',
-            scope: 'profile email',
-            prompt: 'select_account'
-        }
-        Vue.use(GAuth, gauthOption)
+            const google = await this.$gAuth.signOut()
+            console.log("googleUser", googleUser);
+            console.log("getId", googleUser.getId());
+            console.log("getBaseProfile", googleUser.getBasicProfile());
+            console.log("getAuthResponse", googleUser.getAuthResponse());
+            console.log(
+            "getAuthResponse$G",
+            this.$gAuth.GoogleAuth.currentUser.get().getAuthResponse()
+            );
+            this.isLogin = this.$gAuth.isAuthorized;
+            // "Not a valid origin for the client: http://localhost:8080 has not been registered for client ID 123368583629-jqqc210j1sbhteum2b0q29c67ghfe9vl.apps.googleusercontent.com. Please go to https://console.developers.google.com/ and register this origin for your project's client ID."
         }
     },
 }
