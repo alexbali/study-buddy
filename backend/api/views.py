@@ -6,6 +6,7 @@ from django.views import View
 from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
 from django.views.decorators.csrf import csrf_exempt
+from .models import Room, User
 import json
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -33,12 +34,44 @@ class RoomView(View):
         # create a new room 
         room_name = request.POST.get("room_name")
         max_participants = request.POST.get("max_participants")
+        description = request.POST.get("description")
+        course_subject = request.POST.get("course_subject")
+        topic_of_room = request.POST.get("topic_of_room")
         room = client.video.rooms.create(
             unique_name=room_name,
             type="group",
             max_participants=max_participants,
         )
-        
+        createdRoom = Room.objects.create(
+            sid: room.sid,
+            account_sid: room.account_sid,
+            date_created: room.date_created,
+            date_updated: room.date_updated,
+            status: room.status,
+            type_of_room: room.type,
+            enabled_turn: room.enabled_turn,
+            unique_name: room.unique_name,
+            max_participants: room.max_participants,
+            max_participant_duration: room.max_participant_duration,
+            max_concurrent_published_tracks: room.max_concurrent_published_tracks,
+            duration: room.duration,
+            status_callback_method: room.status_callback_method,
+            status_callback: room.status_callback,
+            record_participants_on_connect: room.record_participants_on_connect,
+            audio_only: room.audio_only,
+            media_region: room.media_region,
+            empty_room_time_out: room.empty_room_time_out,
+            unused_room_timeout: room.unused_room_timeout,
+            end_time: room.end_time,
+            url: room.url,
+            participants: room.participants,
+            recordings: room.recordings,
+            recording_rules: room.recording_rules,
+            description: description,
+            course_subject: course_subject,
+            topic_of_room: topic_of_room
+        )
+        createdRoom.save()
         return JsonResponse({"room_sid": room.sid})
 
 class TokenView(View):
