@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-miyu-92nz)tm=%4-pog)r(9&)98_lcj)j_dw&g#gob&2r_qay3
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    ".ngrok.io", "*"
+    ".ngrok.io", "127.0.0.1","*"
 ]
 
 
@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'corsheaders',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -49,12 +50,18 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'backendSetup.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000','https://030a-2001-1970-4f80-9600-00-c42d.ngrok.io'
+]
 
 TEMPLATES = [
     {

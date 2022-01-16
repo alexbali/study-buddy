@@ -42,13 +42,20 @@
 
         <script src="//media.twiliocdn.com/sdk/js/video/releases/2.3.0/twilio-video.min.js"></script>
         <script>
+            let connected = false;
+            const usernameInput = document.getElementById('username');
+            const button = document.getElementById('join_leave');
+            const container = document.getElementById('container');
+            const count = document.getElementById('count');
+            let room;
+
             function addLocalVideo() {
                 Twilio.Video.createLocalVideoTrack().then(track => {
                     let video = document.getElementById('local').firstChild;
                     video.appendChild(track.attach());
                 });
             };
-            
+
             function connectButtonHandler(event) {
                 event.preventDefault();
                 if (!connected) {
@@ -77,12 +84,11 @@
             function connect(username) {
                 let promise = new Promise((resolve, reject) => {
                     // get a token from the back end
-                    fetch('token/'+ username, {
+                    fetch('token/'+username, {
                         method: 'POST',
                         body: JSON.stringify({'username': username})
                     }).then(res => res.json()).then(data => {
                         // join video call
-                        console.log("STH", data.token);
                         return Twilio.Video.connect(data.token);
                     }).then(_room => {
                         room = _room;
@@ -148,13 +154,6 @@
                 connected = false;
                 updateParticipantCount();
             };
-
-            let connected = false;
-            const usernameInput = document.getElementById('username');
-            const button = document.getElementById('join_leave');
-            const container = document.getElementById('container');
-            const count = document.getElementById('count');
-            let room;
 
             addLocalVideo();
             button.addEventListener('click', connectButtonHandler);

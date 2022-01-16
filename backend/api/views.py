@@ -1,22 +1,21 @@
 from django.shortcuts import render
 
-from django.conf import settings
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from twilio.twiml.voice_response import VoiceResponse, Dial
-from twilio.jwt.access_token.grants import VideoGrant
+from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
-from twilio.rest import Client
-
-client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-
+from django.views.decorators.csrf import csrf_exempt
 
 @method_decorator(csrf_exempt, name="dispatch")
-class APIView(View):
+class TestView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'index.html')
+        return render(request, "index.html", {})
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse("POST request received")
 
 class RoomView(View):
     def get(self, request, *args, **kwargs):
@@ -33,65 +32,55 @@ class RoomView(View):
                 "status": conference.status,
             } for conference in rooms]
         return JsonResponse({"rooms": rooms_reps})
-
+    
     def post(self, request, *args, **kwargs):
         room_name = request.POST["roomName"]
-        participant_label = request.POST["participantName"]
+        participant_label = request.POST["participantLabel"]
         response = VoiceResponse()
-        
-        account_sid = settings.TWILIO_ACCOUNT_SID
-        auth_token = settings.TWILIO_AUTH_TOKEN
-        client = Client(account_sid, auth_token)
-
-        room = client.video.rooms.create(unique_name='HELLO')
-        print(room)
-        return HttpResponse(room)
+        dial = Dial()
+        dial.conference(
+            name=room_name,
+            participant_label=participant_label,
+            start_conference_on_enter=True,
+        )
+        response.append(dial)
+        return HttpResponse(response.to_xml(), content_type="text/xml")
 
 class TokenView(View):
     @csrf_exempt
+    def post(self, request, username, *args, **kwargs):
+        voice_grant = grants.VoiceGrant(
+            outgoing_application_sid=settings.TWIML_APPLICATION_SID,
+            incoming_allow=True,
+        )
+        
+        video_grant = grants.VideoGrant(room='My Room')
+
+
+        access_token = AccessToken(
+            settings.TWILIO_ACCOUNT_SID,
+            settings.TWILIO_API_KEY,
+            settings.TWILIO_API_SECRET,
+            identity=username
+        )
+
+        # access_token.add_grant(voice_grant)
+        access_token.add_grant(video_grant)
+
+        jwt_token = access_token.to_jwt()
+        return JsonResponse({"token": jwt_token.decode("utf-8")})
+
     def get(self, request, username, *args, **kwargs):
         voice_grant = grants.VoiceGrant(
             outgoing_application_sid=settings.TWIML_APPLICATION_SID,
             incoming_allow=True,
         )
-
-        video_grant = grants.VideoGrant(room='My Room')
-
         access_token = AccessToken(
             settings.TWILIO_ACCOUNT_SID,
             settings.TWILIO_API_KEY,
             settings.TWILIO_API_SECRET,
             identity=username
         )
-
-        # access_token.add_grant(voice_grant)
-        access_token.add_grant(video_grant)
+        access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-
-        return JsonResponse({"token": jwt_token})
-
-    @csrf_exempt
-    def post(self, request, username, *args, **kwargs):
-        print("TEST")
-
-        voice_grant = grants.VoiceGrant(
-            outgoing_application_sid=settings.TWIML_APPLICATION_SID,
-            incoming_allow=True,
-        )
-
-        video_grant = grants.VideoGrant(room='My Room')
-
-        access_token = AccessToken(
-            settings.TWILIO_ACCOUNT_SID,
-            settings.TWILIO_API_KEY,
-            settings.TWILIO_API_SECRET,
-            identity=username
-        )
-
-        # access_token.add_grant(voice_grant)
-        access_token.add_grant(video_grant)
-        jwt_token = access_token.to_jwt()
-
-        return JsonResponse({"token": jwt_token})
-
-        # return JsonResponse({"token": jwt_token.decode("utf-8")})
+        return JsonResponse({"token": jwt_token.decode("utf-8")})
