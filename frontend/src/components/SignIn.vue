@@ -7,7 +7,9 @@
             <input v-model="email" placeholder="youremail@ualberta.ca" type="text" id="typeText" class="form-control" />
             <!-- <label class="form-label" for="typeText">Text input</label> -->
         </div>
-        <button @click="authenticateWithGoogle" type="button" class="btn btn-outline-primary signin-btn">Authenticate with Google</button>
+        <button @click="signIn()" type="button" class="btn btn-outline-primary signin-btn">Sign in with Google</button>
+
+        <button @click="signOut()" type="button" class="btn btn-outline-primary signout-btn">Sign out</button>
     </div>
 
 
@@ -21,21 +23,23 @@ export default {
     name: 'SignIn',
     data() {
         return {
-            email: "",
+            email: ""
         }
     },
     methods: {
-        async authenticateWithGoogle() {
-            const google = await this.$gAuth.signOut()
-            console.log("googleUser", googleUser);
-            console.log("getId", googleUser.getId());
-            console.log("getBaseProfile", googleUser.getBasicProfile());
-            console.log("getAuthResponse", googleUser.getAuthResponse());
-            console.log(
-            "getAuthResponse$G",
-            this.$gAuth.GoogleAuth.currentUser.get().getAuthResponse()
-            );
-            this.isLogin = this.$gAuth.isAuthorized;
+        async signOut(){
+            this.$gAuth.signOut()
+        },
+        async signIn() {
+            const googleUser = await this.$gAuth.signIn().catch(error => {
+              console.error('Failed to get google user')
+              throw error
+            })
+            
+            this.email = googleUser.getBasicProfile().ev;
+            if(!this.email){
+              throw new Error('Failed to get email from google user')
+            }
             // "Not a valid origin for the client: http://localhost:8080 has not been registered for client ID 123368583629-jqqc210j1sbhteum2b0q29c67ghfe9vl.apps.googleusercontent.com. Please go to https://console.developers.google.com/ and register this origin for your project's client ID."
         }
     },
