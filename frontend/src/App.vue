@@ -1,16 +1,19 @@
 <template>
   <NavBar />
+  <SignIn />
 </template>
 
 <script>
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import NavBar from './components/NavBar.vue'
+import SignIn from './components/SignIn.vue'
 
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    SignIn
   }
 }
 </script>
