@@ -6,6 +6,7 @@ from django.views import View
 from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
@@ -25,6 +26,7 @@ class RoomView(View):
                 "max_participants": conference.max_participants,
                 "status": conference.status,
             } for conference in rooms]
+
         return JsonResponse({"rooms": rooms_reps})
 
     @csrf_exempt
@@ -41,14 +43,15 @@ class RoomView(View):
         return JsonResponse({"room_sid": room.sid})
 
 class TokenView(View):
-    def post(self, request, username, *args, **kwargs):
-        voice_grant = grants.VoiceGrant(
-            outgoing_application_sid=settings.TWIML_APPLICATION_SID,
-            incoming_allow=True,
-        )
-        
-        video_grant = grants.VideoGrant(room='My Room')
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        username = data["username"]
+        room_sid = data["sid"]
 
+        if room_sid=='':
+            video_grant = grants.VideoGrant(room='My Room')
+        else:
+            video_grant = grants.VideoGrant(room=room_sid)
 
         access_token = AccessToken(
             settings.TWILIO_ACCOUNT_SID,
@@ -57,10 +60,10 @@ class TokenView(View):
             identity=username
         )
 
-        # access_token.add_grant(voice_grant)
         access_token.add_grant(video_grant)
 
         jwt_token = access_token.to_jwt()
+        print(jwt_token)
         return JsonResponse({"token": jwt_token})
 
     def get(self, request, username, *args, **kwargs):
