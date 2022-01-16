@@ -1,11 +1,9 @@
 <template>
-  <!-- <NavBar />
-  <SignIn v-if="!displayHomePage" @sign-in="displayHome"/>
-  <HomePage v-if="displayHomePage" :email="email" /> -->
-
-  <div class="home">
+  <div>
     <NavBar />
-    <VideoPage />
+    <SignIn v-if="!displayHomePage" @sign-in="displayHome"/>
+    <VideoPage v-if="displayHomePage" :email="email"/>
+    <!-- <HomePage v-if="displayHomePage" :email="email" /> You'll want to merge the functionality of home and video-->
   </div>
 
 </template>
