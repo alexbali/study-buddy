@@ -60,7 +60,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backendSetup.urls'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000','https://030a-2001-1970-4f80-9600-00-c42d.ngrok.io'
+    'http://localhost:8000','https://a442-2001-1970-4f80-9600-00-c42d.ngrok.io'
 ]
 
 TEMPLATES = [

@@ -1,21 +1,20 @@
 from django.shortcuts import render
+from twilio.rest import Client
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 from twilio.twiml.voice_response import VoiceResponse, Dial
 from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
 from django.views.decorators.csrf import csrf_exempt
 
+client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
 @method_decorator(csrf_exempt, name="dispatch")
 class TestView(View):
     def get(self, request, *args, **kwargs):
         return render(request, "index.html", {})
-
-    def post(self, request, *args, **kwargs):
-        return HttpResponse("POST request received")
 
 class RoomView(View):
     def get(self, request, *args, **kwargs):
@@ -32,7 +31,8 @@ class RoomView(View):
                 "status": conference.status,
             } for conference in rooms]
         return JsonResponse({"rooms": rooms_reps})
-    
+
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         room_name = request.POST["roomName"]
         participant_label = request.POST["participantLabel"]

@@ -30,6 +30,7 @@
     <body>
         <h1>Flask & Twilio Video Conference</h1>
         <form>
+            {% csrf_token %}
             <label for="username">Name: </label>
             <input type="text" name=”username” id="username">
             <button id="join_leave">Join call</button>
