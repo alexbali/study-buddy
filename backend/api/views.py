@@ -42,6 +42,8 @@ class RoomView(View):
             type="group",
             max_participants=max_participants,
         )
+
+        # create room model object
         createdRoom = Room.objects.create(
             sid: room.sid,
             account_sid: room.account_sid,
@@ -71,7 +73,10 @@ class RoomView(View):
             course_subject: course_subject,
             topic_of_room: topic_of_room
         )
+
+        # save room to db
         createdRoom.save()
+        
         return JsonResponse({"room_sid": room.sid})
 
 class TokenView(View):
