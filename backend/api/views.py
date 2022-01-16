@@ -2,7 +2,6 @@ from django.shortcuts import render
 from twilio.rest import Client
 
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
 from django.views import View
 from twilio.twiml.voice_response import VoiceResponse, Dial
 from django.conf import settings
@@ -11,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
-@method_decorator(csrf_exempt, name="dispatch")
+# @method_decorator(csrf_exempt, name="dispatch")
 class TestView(View):
     def get(self, request, *args, **kwargs):
         return render(request, "index.html", {})
@@ -47,7 +46,6 @@ class RoomView(View):
         return HttpResponse(response.to_xml(), content_type="text/xml")
 
 class TokenView(View):
-    @csrf_exempt
     def post(self, request, username, *args, **kwargs):
         voice_grant = grants.VoiceGrant(
             outgoing_application_sid=settings.TWIML_APPLICATION_SID,
@@ -68,7 +66,7 @@ class TokenView(View):
         access_token.add_grant(video_grant)
 
         jwt_token = access_token.to_jwt()
-        return JsonResponse({"token": jwt_token.decode("utf-8")})
+        return JsonResponse({"token": jwt_token})
 
     def get(self, request, username, *args, **kwargs):
         voice_grant = grants.VoiceGrant(
@@ -83,4 +81,4 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-        return JsonResponse({"token": jwt_token.decode("utf-8")})
+        return JsonResponse({"token": jwt_token})
