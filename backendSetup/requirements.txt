@@ -1,0 +1,3 @@
+django
+twilio
+python-dotenv
