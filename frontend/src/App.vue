@@ -1,7 +1,13 @@
 <template>
-  <NavBar />
+  <!-- <NavBar />
   <SignIn v-if="!displayHomePage" @sign-in="displayHome"/>
-  <HomePage v-if="displayHomePage" :email="email" />
+  <HomePage v-if="displayHomePage" :email="email" /> -->
+
+  <div class="home">
+    <NavBar />
+    <VideoPage />
+  </div>
+
 </template>
 
 <script>
@@ -10,6 +16,8 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import NavBar from './components/NavBar.vue'
 import SignIn from './components/SignIn.vue'
 import HomePage from './components/HomePage.vue'
+import VideoPage from './components/VideoPage.vue'
+
 
 export default {
   name: 'App',
@@ -22,7 +30,8 @@ export default {
   components: {
     NavBar,
     SignIn,
-    HomePage
+    HomePage,
+    VideoPage
   },
   methods: {
     displayHome(email) {
@@ -43,6 +52,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
-  /* margin: 0; */
 }
 </style>
