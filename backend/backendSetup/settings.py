@@ -49,7 +49,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -60,7 +59,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backendSetup.urls'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000','https://030a-2001-1970-4f80-9600-00-c42d.ngrok.io'
+    'http://localhost:8000','https://*.ngrok.io'
 ]
 
 TEMPLATES = [
