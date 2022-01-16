@@ -47,8 +47,8 @@ class RoomView(View):
         print(room)
         return HttpResponse(room)
 
-
 class TokenView(View):
+    @csrf_exempt
     def get(self, request, username, *args, **kwargs):
         voice_grant = grants.VoiceGrant(
             outgoing_application_sid=settings.TWIML_APPLICATION_SID,
@@ -70,9 +70,10 @@ class TokenView(View):
 
         return JsonResponse({"token": jwt_token})
 
+    @csrf_exempt
     def post(self, request, username, *args, **kwargs):
         print("TEST")
-        
+
         voice_grant = grants.VoiceGrant(
             outgoing_application_sid=settings.TWIML_APPLICATION_SID,
             incoming_allow=True,
