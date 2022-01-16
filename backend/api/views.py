@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
-# @method_decorator(csrf_exempt, name="dispatch")
 class TestView(View):
     def get(self, request, *args, **kwargs):
         return render(request, "index.html", {})
