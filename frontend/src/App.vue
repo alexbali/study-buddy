@@ -1,16 +1,21 @@
 <template>
-  <NavBar />
+  <div class="home">
+    <NavBar />
+    <VideoPage />
+  </div>
 </template>
 
 <script>
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import NavBar from './components/NavBar.vue'
+import VideoPage from './components/VideoPage.vue'
 
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    VideoPage
   }
 }
 </script>
@@ -23,6 +28,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
-  /* margin: 0; */
 }
 </style>
