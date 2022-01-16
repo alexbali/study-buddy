@@ -1,15 +1,11 @@
 <template>
 <div class="container">
     <div class="container-elements">
-        <h1 class="h1-header">Welcome To Study Buddy</h1>
-        <h2 class="header-instruction">Enter Your Email</h2>
-        <div class="form-outline email-input">
-            <input v-model="email" placeholder="youremail@ualberta.ca" type="text" id="typeText" class="form-control" />
-            <!-- <label class="form-label" for="typeText">Text input</label> -->
-        </div>
+        <h1 class="h1-header">Welcome To Study Buddy!</h1>
+        <!-- <h2 class="header-instruction">Enter Your Email</h2> -->
         <button @click="signIn()" type="button" class="btn btn-outline-primary signin-btn">Sign in with Google</button>
 
-        <button @click="signOut()" type="button" class="btn btn-outline-primary signout-btn">Sign out</button>
+        <!-- <button @click="signOut()" type="button" class="btn btn-outline-primary signout-btn">Sign out</button> -->
     </div>
 
 
@@ -40,7 +36,8 @@ export default {
             if(!this.email){
               throw new Error('Failed to get email from google user')
             }
-            // "Not a valid origin for the client: http://localhost:8080 has not been registered for client ID 123368583629-jqqc210j1sbhteum2b0q29c67ghfe9vl.apps.googleusercontent.com. Please go to https://console.developers.google.com/ and register this origin for your project's client ID."
+            this.$emit('sign-in', this.email)
+            console.log('working')
         }
     },
 }
@@ -71,7 +68,7 @@ export default {
 
 .container-elements {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     background: rgb(255, 255, 255);
@@ -79,6 +76,6 @@ export default {
 }
 
 .signin-btn {
-    margin: 20px;
+    margin: 60px;
 }
 </style>
